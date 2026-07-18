@@ -359,7 +359,7 @@ io.on("connection", async (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000; // Fixed to match Railway public networking (routes to port 3000)
 
 // Health check route
 app.get("/health", (req, res) => res.json({ status: "ok" }));
