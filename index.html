@@ -1,0 +1,1816 @@
+<!doctype html>
+<html lang="ku" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Internal Nexus</title>
+  <link rel="icon" href="logo.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&family=Outfit:wght@300;400;600;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-color: #030305;
+      --surface-color: rgba(255, 255, 255, 0.02);
+      --surface-hover: rgba(255, 255, 255, 0.05);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary-color: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --secondary-color: rgba(255, 255, 255, 0.05);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --font-family: "Vazirmatn", "Outfit", sans-serif;
+    }
+
+    /* Basic Setup */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: #050508;
+      background-image: url('logo.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(5, 5, 8, 0.85); 
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .background-orbs {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: -2;
+      pointer-events: none;
+    }
+    
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.5;
+      animation: floatOrb 20s infinite ease-in-out alternate;
+    }
+    
+    .orb-1 { width: 450px; height: 450px; background: rgba(139, 92, 246, 0.6); top: -10%; left: -10%; animation-delay: 0s; }
+    .orb-2 { width: 350px; height: 350px; background: rgba(236, 72, 153, 0.5); bottom: -10%; right: -10%; animation-delay: -5s; }
+    .orb-3 { width: 400px; height: 400px; background: rgba(56, 189, 248, 0.4); top: 40%; left: 60%; animation-delay: -10s; }
+    .orb-4 { width: 300px; height: 300px; background: rgba(16, 185, 129, 0.4); top: 60%; left: 10%; animation-delay: -15s; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 80px) scale(1.2); }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 10px;
+      border: 2px solid #050508;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(10, 10, 15, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 1000;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text-primary);
+    }
+
+    .nav-links a.active {
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), #6d28d9);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.6rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-hover), #5b21b6);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 2px 10px rgba(139, 92, 246, 0.2);
+    }
+
+    .btn-block {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #0f0f14;
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      border-radius: 24px;
+      width: 90%;
+      max-width: 450px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1.2rem;
+      left: 1.2rem;
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    /* Hero Section */
+    main {
+      padding: 10rem 4rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero-center {
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-center h1 {
+      font-size: 3.8rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, #fff 20%, #a78bfa 40%, #a78bfa 60%, #fff 80%);
+      background-size: 200% auto;
+      color: #fff;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s linear infinite;
+      text-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    @keyframes shine {
+      to { background-position: 200% center; }
+    }
+
+    /* Chat UI */
+    .chat-section {
+      margin-top: 4rem;
+    }
+
+    .chat-container {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 0.8rem 1.2rem;
+      border-radius: 15px;
+      font-size: 0.95rem;
+    }
+
+    .incoming {
+      background: var(--surface-hover);
+      align-self: flex-start;
+      border-top-right-radius: 2px;
+    }
+
+    .outgoing {
+      background: rgba(139, 92, 246, 0.2);
+      align-self: flex-end;
+      border-top-left-radius: 2px;
+    }
+
+    .chat-input-area {
+      padding: 1rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      background: #1a1a24;
+      border: 1px solid var(--border-color);
+      padding: 0.8rem;
+      border-radius: 10px;
+      color: #fff;
+      outline: none;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #050508;
+      color: #fff;
+    }
+
+    /* Items Section */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .item-card {
+      --card-theme: #8b5cf6;
+      --card-theme-fade: rgba(139, 92, 246, 0.5);
+      --card-theme-bg: rgba(30, 25, 45, 0.8);
+      background: rgba(15, 15, 25, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 1.2rem;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .item-card[data-type="mod"] {
+      --card-theme: #ef4444; 
+      --card-theme-fade: rgba(239, 68, 68, 0.5);
+      --card-theme-bg: rgba(45, 20, 20, 0.8);
+    }
+    
+    .item-card[data-type="tool"] {
+      --card-theme: #38bdf8; 
+      --card-theme-fade: rgba(56, 189, 248, 0.5);
+      --card-theme-bg: rgba(20, 35, 45, 0.8);
+    }
+
+    .item-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--card-theme-fade),
+        transparent
+      );
+      transform: skewX(-20deg);
+      transition: 0.7s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .item-card:hover::before {
+      left: 150%;
+    }
+
+    .item-card:hover {
+      transform: translateY(-12px) scale(1.03);
+      background: var(--card-theme-bg);
+      border-color: var(--card-theme-fade);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3), 0 0 25px var(--card-theme-fade);
+    }
+
+    .item-img-container {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    .item-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+      display: block;
+    }
+
+    .item-card:hover .item-img {
+      transform: scale(1.1);
+    }
+    
+    .item-img-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .item-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .item-category {
+      color: var(--card-theme);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .card-dl-btn {
+      background: var(--card-theme);
+      background-image: linear-gradient(135deg, var(--card-theme), rgba(0,0,0,0.2));
+      color: white;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .card-dl-btn:hover {
+      box-shadow: 0 0 15px var(--card-theme);
+      transform: translateY(-2px);
+    }
+
+    .section-heading {
+      margin-top: 4rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    @keyframes slideUpFade {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.96);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .page-view {
+      display: none;
+    }
+
+    .page-view.active {
+      display: block;
+      animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-center h1 {
+        font-size: 2.2rem;
+      }
+    }
+
+    .file-upload-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100px;
+      border: 2px dashed rgba(139, 92, 246, 0.4);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 15, 25, 0.5);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      margin-bottom: 0.8rem;
+    }
+
+    .file-upload-wrapper:hover {
+      border-color: var(--primary-color);
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    .file-upload-wrapper input[type="file"] {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+      top: 0;
+      left: 0;
+    }
+
+    .file-upload-icon {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      margin-bottom: 0.4rem;
+    }
+    
+    .file-upload-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .file-upload-wrapper.has-file {
+      border-style: solid;
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    
+    .file-upload-wrapper.has-file .file-upload-icon {
+      color: #10b981;
+    }
+    .ambient-vehicles {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .ambient-vehicle {
+      position: absolute;
+      color: var(--primary-color);
+      opacity: 0.15;
+      animation: driveAcross linear infinite;
+      filter: drop-shadow(0 0 15px var(--primary-color));
+    }
+
+    @keyframes driveAcross {
+      0% { transform: translateX(-200px); }
+      100% { transform: translateX(120vw); }
+    }
+    
+    @keyframes driveAcrossReverse {
+      0% { transform: translateX(120vw) scaleX(-1); }
+      100% { transform: translateX(-200px) scaleX(-1); }
+    }
+
+    .v-1 { bottom: 2%; font-size: 5rem; animation-duration: 20s; animation-delay: -3s; }
+    .v-2 { bottom: 8%; font-size: 3rem; animation-duration: 28s; animation-name: driveAcrossReverse; animation-delay: -17s; opacity: 0.1; }
+    .v-3 { bottom: 15%; font-size: 2rem; animation-duration: 35s; animation-delay: -14s; color: #ef4444; filter: drop-shadow(0 0 10px #ef4444); }
+    .v-4 { bottom: 5%; font-size: 4rem; animation-duration: 24s; animation-name: driveAcrossReverse; animation-delay: -10s; color: #38bdf8; filter: drop-shadow(0 0 10px #38bdf8); opacity: 0.12; }
+    .v-5 { bottom: 35%; font-size: 3rem; animation-duration: 40s; animation-delay: -8s; color: #a855f7; filter: drop-shadow(0 0 10px #a855f7); opacity: 0.1; }
+    .v-6 { bottom: 65%; font-size: 2.5rem; animation-duration: 50s; animation-name: driveAcrossReverse; animation-delay: -25s; color: #f59e0b; filter: drop-shadow(0 0 10px #f59e0b); opacity: 0.08; }
+    .v-7 { bottom: 50%; font-size: 3.5rem; animation-duration: 45s; animation-delay: -38s; color: #10b981; filter: drop-shadow(0 0 10px #10b981); opacity: 0.1; }
+    .v-8 { bottom: 85%; font-size: 2.8rem; animation-duration: 55s; animation-name: driveAcrossReverse; animation-delay: -20s; color: #ec4899; filter: drop-shadow(0 0 10px #ec4899); opacity: 0.08; }
+    .v-9 { bottom: 22%; font-size: 3.2rem; animation-duration: 33s; animation-name: driveAcrossReverse; animation-delay: -28s; color: #6366f1; filter: drop-shadow(0 0 10px #6366f1); opacity: 0.09; }
+    .v-10 { bottom: 95%; font-size: 2rem; animation-duration: 42s; animation-delay: -32s; color: #2dd4bf; filter: drop-shadow(0 0 10px #2dd4bf); opacity: 0.07; }
+    .v-11 { bottom: 42%; font-size: 1.8rem; animation-duration: 30s; animation-delay: -12s; color: #fbbf24; filter: drop-shadow(0 0 10px #fbbf24); opacity: 0.1; }
+    .v-12 { bottom: 75%; font-size: 4.5rem; animation-duration: 60s; animation-name: driveAcrossReverse; animation-delay: -45s; color: #f43f5e; filter: drop-shadow(0 0 10px #f43f5e); opacity: 0.05; }
+    .v-13 { bottom: 18%; font-size: 2.2rem; animation-duration: 38s; animation-delay: -5s; color: #8b5cf6; filter: drop-shadow(0 0 10px #8b5cf6); opacity: 0.1; }
+    .v-14 { bottom: 55%; font-size: 3.8rem; animation-duration: 48s; animation-name: driveAcrossReverse; animation-delay: -30s; color: #14b8a6; filter: drop-shadow(0 0 10px #14b8a6); opacity: 0.08; }
+    .v-15 { bottom: 90%; font-size: 2.6rem; animation-duration: 52s; animation-delay: -44s; color: #cbd5e1; filter: drop-shadow(0 0 10px #cbd5e1); opacity: 0.06; }
+    .v-16 { bottom: 30%; font-size: 2.4rem; animation-duration: 36s; animation-name: driveAcrossReverse; animation-delay: -18s; color: #84cc16; filter: drop-shadow(0 0 10px #84cc16); opacity: 0.11; }
+    
+    @keyframes spinLoader {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulseLoader {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.7; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="pageLoader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #050508; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease, visibility 0.6s ease;">
+    <div style="position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center; margin-bottom: 2rem;">
+      <div style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: 4px solid rgba(139, 92, 246, 0.1); border-top-color: #8b5cf6; border-radius: 50%; box-sizing: border-box; animation: spinLoader 1s linear infinite;"></div>
+      <div style="position: absolute; top:10px; left:10px; width: 80px; height: 80px; border: 4px solid rgba(56, 189, 248, 0.1); border-right-color: #38bdf8; border-radius: 50%; box-sizing: border-box; animation: spinLoader 1.5s linear infinite reverse;"></div>
+      <img src="logo.png" style="width: 45px; border-radius: 12px; animation: pulseLoader 2s ease-in-out infinite;">
+    </div>
+    <h2 style="color: #fff; font-family: 'Inter', sans-serif; letter-spacing: 2px; font-size: 1.8rem; text-shadow: 0 0 15px rgba(139,92,246,0.6); margin-bottom: 0.5rem;">NEXUS</h2>
+    <p style="color: var(--primary-color); font-size: 1rem; font-weight: 600; letter-spacing: 1px; animation: pulseLoader 1.5s infinite;">تکایە چاوەڕێبە...</p>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('pageLoader');
+        if (loader) {
+          loader.style.opacity = '0';
+          loader.style.visibility = 'hidden';
+          setTimeout(() => loader.remove(), 600);
+        }
+      }, 2500); 
+    });
+  </script>
+  <div class="background-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+  <div class="ambient-vehicles">
+    <i class="fa-solid fa-car-side ambient-vehicle v-1"></i>
+    <i class="fa-solid fa-truck-fast ambient-vehicle v-2"></i>
+    <i class="fa-solid fa-motorcycle ambient-vehicle v-3"></i>
+    <i class="fa-solid fa-car-side ambient-vehicle v-4"></i>
+    <i class="fa-solid fa-gamepad ambient-vehicle v-5"></i>
+    <i class="fa-solid fa-mobile-screen ambient-vehicle v-6"></i>
+    <i class="fa-solid fa-screwdriver-wrench ambient-vehicle v-7"></i>
+    <i class="fa-solid fa-map-location-dot ambient-vehicle v-8"></i>
+    <i class="fa-solid fa-headset ambient-vehicle v-9"></i>
+    <i class="fa-solid fa-desktop ambient-vehicle v-10"></i>
+    <i class="fa-solid fa-ghost ambient-vehicle v-11"></i>
+    <i class="fa-solid fa-robot ambient-vehicle v-12"></i>
+    <i class="fa-solid fa-code ambient-vehicle v-13"></i>
+    <i class="fa-solid fa-shield-halved ambient-vehicle v-14"></i>
+    <i class="fa-solid fa-rocket ambient-vehicle v-15"></i>
+    <i class="fa-solid fa-meteor ambient-vehicle v-16"></i>
+  </div>
+  <nav class="navbar">
+    <div class="logo"><img src="logo.png" style="width: 38px; height: 38px; border-radius: 10px;"> NEXUS</div>
+    <div class="nav-links">
+      <a class="nav-item active" id="nav-home" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i> سەرەکی</a>
+      <a class="nav-item" id="nav-apps" onclick="navigateTo('apps')"><i class="fa-brands fa-app-store-ios"></i>
+        ئەپڵیکەیشنەکان</a>
+      <a class="nav-item" id="nav-tools" onclick="navigateTo('tools')"><i class="fa-solid fa-toolbox"></i> تووڵەکان</a>
+      <a class="nav-item" id="nav-mods" onclick="navigateTo('mods')"><i class="fa-solid fa-car"></i> مۆدەکان</a>
+      <a class="nav-item" id="nav-publicchat" onclick="navigateTo('publicchat')"><i class="fa-regular fa-comments"></i>
+        چاتی گشتی</a>
+      <a class="nav-item" id="nav-aichat" onclick="navigateTo('aichat')"><i class="fa-solid fa-robot"></i> نێکسس AI</a>
+    </div>
+    <div style="display:flex; align-items:center; gap:15px;">
+      <select id="langSwitcher" onchange="changeLanguage(this.value)" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; outline: none; cursor: pointer; font-family:var(--font-family); appearance: none; -webkit-appearance: none; padding-right: 1.5rem; background-image: url('data:image/svg+xml;utf8,<svg fill=\"white\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 5px center; transition: all 0.3s ease;">
+        <option value="ku" style="background:#13111C; color:#fff; padding:10px;">🇹🇯 Kurdish (کوردی)</option>
+        <option value="en" style="background:#13111C; color:#fff; padding:10px;">🇬🇧 English</option>
+        <option value="ar" style="background:#13111C; color:#fff; padding:10px;">🇸🇦 Arabic (العربية)</option>
+      </select>
+      <button id="loginBtn" class="btn-primary"><i class="fa-solid fa-user"></i> هەژمارەکەم</button>
+    </div>
+  </nav>
+
+  <main>
+    <section id="page-home" class="hero-center page-view active">
+      <div style="margin-bottom: 3rem; margin-top: 2rem;">
+        <img src="logo.png" style="width: 120px; border-radius: 30px; box-shadow: 0 0 30px rgba(139, 92, 246, 0.5); margin-bottom: 1.5rem;">
+        <h1>ناوخۆی نێکسس</h1>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem; line-height: 1.8;">
+          باشترین مۆد و ئەپڵیکەیشنەکان لە یەک شوێندا بەخۆڕایی دابەزێنە. بژی لە دونیای نێکسس وە ببە بە بەشێک لە گەورەترین کۆمەڵگەی گەیمەران و پەرەپێدەران!
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 4rem;">
+          <button class="btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;" onclick="navigateTo('apps')"><i class="fa-solid fa-rocket"></i> دەستپێبکە</button>
+          <button class="btn-primary" style="background: rgba(255, 255, 255, 0.05); color: #fff; padding: 1rem 2.5rem; font-size: 1.1rem;"
+            onclick="navigateTo('publicchat')"><i class="fa-regular fa-comments"></i> چاتی گشتی</button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: right; margin-bottom: 4rem;">
+        <div style="background: rgba(15, 15, 25, 0.6); border: 1px solid rgba(252, 211, 77, 0.3); padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#fcd34d'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(252, 211, 77, 0.3)'">
+          <i class="fa-solid fa-bolt" style="color: #fcd34d; font-size: 3rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(252,211,77,0.5));"></i>
+          <h3 style="margin-bottom: 0.8rem; font-size: 1.4rem;">خێرا لە دابەزاندن</h3>
+          <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.7;">سێرڤەرەکانی نێکسس زامنی خێراترین خێرایی دابەزاندنت بۆ دەکەن بێ هیچ سنووردارکردنێک بۆ تەواوی یاری و مۆدەکان.</p>
+        </div>
+        <div style="background: rgba(15, 15, 25, 0.6); border: 1px solid rgba(239, 68, 68, 0.3); padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#ef4444'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(239, 68, 68, 0.3)'">
+          <i class="fa-solid fa-shield-halved" style="color: #ef4444; font-size: 3rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(239,68,68,0.5));"></i>
+          <h3 style="margin-bottom: 0.8rem; font-size: 1.4rem;">پارێزراو و سەلامەت</h3>
+          <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.7;">هەموو فایل و مۆدەکان پشکنینی وردیان بۆ دەکرێت پێش بڵاوکردنەوە بۆ پاراستنی کۆمپیوتەرەکەت لە هەر جۆرە ڤایرۆسێک.</p>
+        </div>
+        <div style="background: rgba(15, 15, 25, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#38bdf8'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(56, 189, 248, 0.3)'">
+          <i class="fa-solid fa-users" style="color: #38bdf8; font-size: 3rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(56,189,248,0.5));"></i>
+          <h3 style="margin-bottom: 0.8rem; font-size: 1.4rem;">کۆمەڵگەی چالاک</h3>
+          <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.7;">لە ڕێگەی چاتی گشتی و ژیری دەستکردەوە ئەزموونێک وەربگرە کە لە هیچ شوێنێکی تری ڕۆژهەڵاتی ناوەڕاست و کوردستان بونی نییە.</p>
+        </div>
+      </div>
+
+      <div style="position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 50px rgba(139,92,246,0.2); margin-bottom: 4rem; border: 1px solid rgba(255,255,255,0.05);">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" style="width: 100%; height: 400px; object-fit: cover; display: block; filter: brightness(0.6);">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(to top, rgba(5,5,8,0.95), transparent);">
+          <h2 style="font-size: 3rem; margin-bottom: 1rem; text-shadow: 0 4px 15px rgba(0,0,0,0.8); background: linear-gradient(to right, #fff, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ئەزموونێکی بێ وێنە لە گەیمینگ</h2>
+          <p style="color: #ccc; margin-bottom: 2rem; font-size: 1.1rem;">هەزاران مۆد، نەخشە و ئامرازی جیاواز چاوەڕێت دەکەن</p>
+          <button class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem; border-radius: 50px;" onclick="navigateTo('mods')">مۆدەکان ببینە <i class="fa-solid fa-arrow-left" style="margin-right: 0.8rem;"></i></button>
+        </div>
+      </div>
+
+      <!-- Live Stats Area -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; text-align: center; margin-bottom: 5rem;">
+        <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); padding: 2.5rem 1rem; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(139, 92, 246, 0.2)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.1)'">
+          <h2 id="statUsers" style="font-size: 3rem; color: #8b5cf6; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px rgba(139,92,246,0.6)); font-family: 'Inter', sans-serif;">...</h2>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin:0;"><i class="fa-solid fa-users" style="margin-left:5px;"></i> بەکارهێنەری چالاک</p>
+        </div>
+        <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); padding: 2.5rem 1rem; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(56, 189, 248, 0.2)'" onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'">
+          <h2 id="statItems" style="font-size: 3rem; color: #38bdf8; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px rgba(56,189,248,0.6)); font-family: 'Inter', sans-serif;">...</h2>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin:0;"><i class="fa-solid fa-layer-group" style="margin-left:5px;"></i> مۆد و ئەپڵیکەیشن</p>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 2.5rem 1rem; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'">
+          <h2 id="statDownloads" style="font-size: 3rem; color: #10b981; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px rgba(16,185,129,0.6)); font-family: 'Inter', sans-serif;">...</h2>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin:0;"><i class="fa-solid fa-cloud-arrow-down" style="margin-left:5px;"></i> داگرتنەکان</p>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); padding: 2.5rem 1rem; border-radius: 20px; transition: 0.3s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
+          <h2 style="font-size: 3rem; color: #ef4444; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px rgba(239,68,68,0.6)); font-family: 'Inter', sans-serif;">24/7</h2>
+          <p style="color: var(--text-secondary); font-size: 1.1rem; margin:0;"><i class="fa-solid fa-headset" style="margin-left:5px;"></i> پشتیوانی بەردەوام</p>
+        </div>
+      </div>
+
+
+      <!-- Trending Section -->
+      <div style="text-align: right; margin-bottom: 6rem;">
+        <h2 style="font-size: 2rem; margin-bottom: 2rem; border-right: 5px solid #8b5cf6; padding-right: 15px; display: inline-block;"><i class="fa-solid fa-fire" style="color: #f97316;"></i> نوێترینەکانی نێکسس</h2>
+        <div id="trendingGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <p style="color: var(--text-secondary);">تکایە چاوەروانبە...</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer style="margin-top: 5rem; padding-top: 4rem; padding-bottom: 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+        <img src="logo.png" style="width: 80px; border-radius: 20px; margin-bottom: 1.5rem; filter: drop-shadow(0 0 20px rgba(139,92,246,0.6));">
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: 1px;">Internal <span style="color: #8b5cf6;">Nexus</span></h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">بەهێزترین پلاتفۆرمی کوردی تایبەت بە مۆد و پێداویستییەکانی گەیمینگ.</p>
+        <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 3rem;">
+          <a href="#" style="background: rgba(255,255,255,0.05); color: #fff; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.4rem; transition: 0.3s; text-decoration: none;" onmouseover="this.style.background='#5865F2'; this.style.transform='translateY(-5px)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)'"><i class="fa-brands fa-discord"></i></a>
+          <a href="#" style="background: rgba(255,255,255,0.05); color: #fff; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.4rem; transition: 0.3s; text-decoration: none;" onmouseover="this.style.background='#FF0000'; this.style.transform='translateY(-5px)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)'"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" style="background: rgba(255,255,255,0.05); color: #fff; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.4rem; transition: 0.3s; text-decoration: none;" onmouseover="this.style.background='#1DA1F2'; this.style.transform='translateY(-5px)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(0)'"><i class="fa-brands fa-twitter"></i></a>
+        </div>
+        <p style="color: rgba(255,255,255,0.2); font-size: 0.85rem; letter-spacing: 1px;">پەرەپێدراوە لەلایەن DOS © 2026. هەموو مافێک پارێزراوە.</p>
+      </footer>
+    </section>
+
+    <!-- Apps Section -->
+    <section id="page-apps" class="page-view">
+      <h2 class="section-heading" style="margin-top:0"><i class="fa-brands fa-app-store-ios"></i> ئەپڵیکەیشنەکان</h2>
+      <div class="items-grid" id="appsGrid">
+        <p style="color: var(--text-secondary);">تکایە چاوەروانبە....</p>
+      </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="page-tools" class="page-view">
+      <h2 class="section-heading" style="margin-top:0"><i class="fa-solid fa-toolbox"></i> تووڵەکان</h2>
+      <div class="items-grid" id="toolsGrid">
+        <p style="color: var(--text-secondary);">تکایە چاوەروانبە...</p>
+      </div>
+    </section>
+
+    <!-- Mods Section -->
+    <section id="page-mods" class="page-view">
+      <h2 class="section-heading" style="margin-top:0"><i class="fa-solid fa-car"></i> مۆدەکان</h2>
+      <div class="items-grid" id="modsGrid">
+        <p style="color: var(--text-secondary);">تکایە چاوەروانبە...</p>
+      </div>
+    </section>
+
+
+
+
+
+    <!-- Public Chat Section -->
+    <section id="page-publicchat" class="chat-section page-view" style="margin-top:0">
+      <h2 style="margin-bottom: 1.5rem"><i class="fa-solid fa-users"></i> چاتی گشتی</h2>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message incoming">بەخێربێن بۆ چاتی نێکسس!</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="publicChatInput" placeholder="نامەکەت لێرە بنووسە..." />
+          <button id="publicSendBtn" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> ناردن</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Chat Section -->
+    <section id="page-aichat" class="chat-section page-view" style="margin-top:0;">
+      <h2 style="margin-bottom: 1.5rem"><i class="fa-solid fa-robot"></i> نێکسس AI (زیرەکی دەستکرد)</h2>
+      <div class="chat-container">
+        <div class="chat-messages" id="aiMessages">
+          <div class="message incoming">من NEXUS AIـم، سەنتەری زیرەکی دەستکرد! چۆن دەتوانم یارمەتیت بدەم؟ 🤖</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="aiChatInput" placeholder="بە کوردی یان ئینگلیزی پرسیارێک بکە..." />
+          <button id="aiSendBtn" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> ناردن</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal" id="closeAuth">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="loginForm">
+        <h2 style="margin-bottom: 1rem"><i class="fa-solid fa-arrow-right-to-bracket"></i> چوونە ژوورەوە</h2>
+        <div class="form-group">
+          <label><i class="fa-solid fa-envelope"></i> ئیمەیڵ</label>
+          <input type="email" id="loginEmail" placeholder="email@example.com" />
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> وشەی نهێنی</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" />
+        </div>
+        <button class="btn-primary btn-block" id="loginSubmitBtn"><i class="fa-solid fa-right-to-bracket"></i> بچۆ
+          ژوورەوە</button>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem">
+          هەژمارت نییە؟
+          <span style="color: var(--primary-color); cursor: pointer" onclick="toggleAuth()">تۆماربە</span>
+        </p>
+      </div>
+
+      <div id="signupForm" style="display: none">
+        <h2 style="margin-bottom: 1rem"><i class="fa-solid fa-user-plus"></i> دروستکردنی هەژمار</h2>
+        <div class="form-group">
+          <label><i class="fa-solid fa-user"></i> ناوی تەواو</label>
+          <input type="text" id="signupName" placeholder="ناوەکەت لێرە بنووسە" />
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-envelope"></i> ئیمەیڵ</label>
+          <input type="email" id="signupEmail" placeholder="email@example.com" />
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> وشەی نهێنی</label>
+          <input type="password" id="signupPassword" placeholder="••••••••" />
+        </div>
+        <button class="btn-primary btn-block" id="signupSubmitBtn"><i class="fa-solid fa-user-check"></i>
+          تۆماربە</button>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem">
+          پێشتر تۆماربوویت؟
+          <span style="color: var(--primary-color); cursor: pointer" onclick="toggleAuth()">بچۆ ژوورەوە</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Modal -->
+  <div id="dashboardModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+      <button class="close-modal" id="closeDashboard">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h2 style="margin-bottom: 1.5rem; text-align: center;"><i class="fa-solid fa-chart-line"></i> داشبۆردی من</h2>
+
+      <!-- Dashboard Tabs -->
+      <div
+        style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center; border-bottom: 1px solid var(--border-color);">
+        <h3 id="tabProfile"
+          style="cursor: pointer; border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; color: var(--text-primary);"
+          onclick="switchDashboardTab('profile')"><i class="fa-solid fa-user-pen"></i> کەرەستەکانم</h3>
+        <h3 id="tabAdd" style="cursor: pointer; color: var(--text-secondary); padding-bottom: 5px; display: none;"
+          onclick="switchDashboardTab('add')"><i class="fa-solid fa-cloud-arrow-up"></i> بڵاوکردنەوە</h3>
+        <h3 id="tabRole" style="cursor: pointer; color: var(--text-secondary); padding-bottom: 5px; display: none;"
+          onclick="switchDashboardTab('role')"><i class="fa-solid fa-user-shield"></i> بەڕێوەبردن</h3>
+      </div>
+
+      <!-- Profile Settings -->
+      <div id="profileSection">
+        <div class="form-group"><label>ناو</label><input type="text" id="profName"></div>
+        <div class="form-group"><label>ئیمەیڵ</label><input type="email" id="profEmail"></div>
+        <div class="form-group"><label>وشەی نهێنی (گۆڕین)</label><input type="password" id="profPass"
+            placeholder="تەنها گەر گۆڕیت لێرە بینووسە"></div>
+        <div class="form-group">
+          <label>وێنەی پرۆفایل بپشکنە (فایل)</label>
+          <div class="file-upload-wrapper" id="profAvatarWrapper">
+            <input type="file" id="profAvatarFile" accept="image/*" onchange="updateFileLabel(this, 'profAvatarWrapper')">
+            <i class="fa-solid fa-cloud-arrow-up file-upload-icon"></i>
+            <span class="file-upload-text">کلیک بکە بۆ هەڵبژاردنی وێنە</span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="updateProfile()" style="width:100%; margin-bottom:10px;">نوێکردنەوەی زانیارییەکان</button>
+        <button class="btn-primary" onclick="logoutUser()" id="logoutBtn" style="background:#ef4444; width:100%; box-shadow:0 4px 15px rgba(239, 68, 68, 0.3);"><i class="fa-solid fa-right-from-bracket"></i> چوونە دەرەوە</button>
+      </div>
+
+      <!-- Add Item -->
+      <div id="addItemSection" style="display: none;">
+        <div class="form-group" style="display: none;">
+          <label>جۆرەکە</label>
+          <select id="itemType"
+            style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            <option value="app">ئەپ</option>
+            <option value="tool">تووڵ</option>
+            <option value="mod">مۆد</option>
+          </select>
+        </div>
+        <div class="form-group"><label>ناوی ئەپەکە / تووڵەکە / مۆدەکە</label><input type="text" id="itemTitle"></div>
+        <div class="form-group">
+          <label>پۆلێن (کەتەگۆری)</label>
+          <select id="itemCat" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;" onchange="const g=this.options[this.selectedIndex].parentNode.label; document.getElementById('itemType').value = g.includes('مۆدەکان') ? 'mod' : (g.includes('تووڵەکان') ? 'tool' : 'app');">
+            <optgroup label="مۆدەکان (Mods)">
+              <option value="ئۆتۆمبێل (Car)">ئۆتۆمبێل (Car)</option>
+              <option value="نەخشە (Map)">نەخشە (Map)</option>
+              <option value="گرافیک (Graphics)">گرافیک (Graphics)</option>
+              <option value="ڕووکار (UI & HUD)">ڕووکار (UI & HUD)</option>
+            </optgroup>
+            <optgroup label="ئەپەکان (Apps)">
+              <option value="بەرنامەی کۆمپیوتەر (PC App)">بەرنامەی کۆمپیوتەر (PC App)</option>
+              <option value="ئەپی مۆبایل (Mobile App)">ئەپی مۆبایل (Mobile App)</option>
+              <option value="یاری (Game)">یاری (Game)</option>
+              <option value="سۆشیاڵ (Social)">سۆشیاڵ (Social)</option>
+            </optgroup>
+            <optgroup label="تووڵەکان (Tools)">
+              <option value="خێراکردن (Optimization)">خێراکردن (Optimization)</option>
+              <option value="یارمەتیدەر (Utility)">یارمەتیدەر (Utility)</option>
+              <option value="سکریپت (Script)">سکریپت (Script)</option>
+              <option value="هاک / ترەینەر (Cheat/Trainer)">هاک / ترەینەر (Cheat/Trainer)</option>
+            </optgroup>
+            <optgroup label="گشتی (General)">
+              <option value="ئیتر (Other)">ئیتر (Other)</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>فایلی ئەپ/مۆد/تووڵ بپشکنە (بۆ داگرتن)</label>
+          <div class="file-upload-wrapper" id="itemFileWrapper">
+            <input type="file" id="itemFile" onchange="updateFileLabel(this, 'itemFileWrapper')">
+            <i class="fa-solid fa-file-arrow-up file-upload-icon"></i>
+            <span class="file-upload-text">کلیک بکە بۆ هەڵبژاردنی پەڕگە (فایل)</span>
+          </div>
+          <input type="url" id="itemUrl" placeholder="یان لینکی داگرتن لێرە دابنێ (لەجیاتی فایل)">
+        </div>
+        <div class="form-group">
+          <label>وێنەکانی بابەت (تا ٥ وێنە)</label>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+              <div class="file-upload-wrapper" id="imageFileWrapper1" style="height:45px; margin-bottom:0; flex:1; border-color:rgba(139, 92, 246, 0.2);">
+                <input type="file" id="imageFile1" accept="image/*" onchange="updateFileLabel(this, 'imageFileWrapper1')">
+                <i class="fa-solid fa-image file-upload-icon" style="font-size:1.2rem; margin-bottom:0; margin-right:8px; display:inline-block;"></i>
+                <span class="file-upload-text" style="font-size:0.8rem;">وێنەی ١ هەڵبژێرە...</span>
+              </div>
+              <input type="text" id="imageUrl1" placeholder="یان لینکی وێنەی ١..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+              <div class="file-upload-wrapper" id="imageFileWrapper2" style="height:45px; margin-bottom:0; flex:1; border-color:rgba(139, 92, 246, 0.2);">
+                <input type="file" id="imageFile2" accept="image/*" onchange="updateFileLabel(this, 'imageFileWrapper2')">
+                <i class="fa-solid fa-image file-upload-icon" style="font-size:1.2rem; margin-bottom:0; margin-right:8px; display:inline-block;"></i>
+                <span class="file-upload-text" style="font-size:0.8rem;">وێنەی ٢ هەڵبژێرە...</span>
+              </div>
+              <input type="text" id="imageUrl2" placeholder="یان لینکی وێنەی ٢..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+              <div class="file-upload-wrapper" id="imageFileWrapper3" style="height:45px; margin-bottom:0; flex:1; border-color:rgba(139, 92, 246, 0.2);">
+                <input type="file" id="imageFile3" accept="image/*" onchange="updateFileLabel(this, 'imageFileWrapper3')">
+                <i class="fa-solid fa-image file-upload-icon" style="font-size:1.2rem; margin-bottom:0; margin-right:8px; display:inline-block;"></i>
+                <span class="file-upload-text" style="font-size:0.8rem;">وێنەی ٣ هەڵبژێرە...</span>
+              </div>
+              <input type="text" id="imageUrl3" placeholder="یان لینکی وێنەی ٣..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+              <div class="file-upload-wrapper" id="imageFileWrapper4" style="height:45px; margin-bottom:0; flex:1; border-color:rgba(139, 92, 246, 0.2);">
+                <input type="file" id="imageFile4" accept="image/*" onchange="updateFileLabel(this, 'imageFileWrapper4')">
+                <i class="fa-solid fa-image file-upload-icon" style="font-size:1.2rem; margin-bottom:0; margin-right:8px; display:inline-block;"></i>
+                <span class="file-upload-text" style="font-size:0.8rem;">وێنەی ٤ هەڵبژێرە...</span>
+              </div>
+              <input type="text" id="imageUrl4" placeholder="یان لینکی وێنەی ٤..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+              <div class="file-upload-wrapper" id="imageFileWrapper5" style="height:45px; margin-bottom:0; flex:1; border-color:rgba(139, 92, 246, 0.2);">
+                <input type="file" id="imageFile5" accept="image/*" onchange="updateFileLabel(this, 'imageFileWrapper5')">
+                <i class="fa-solid fa-image file-upload-icon" style="font-size:1.2rem; margin-bottom:0; margin-right:8px; display:inline-block;"></i>
+                <span class="file-upload-text" style="font-size:0.8rem;">وێنەی ٥ هەڵبژێرە...</span>
+              </div>
+              <input type="text" id="imageUrl5" placeholder="یان لینکی وێنەی ٥..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>فێرکاری (ئارەزوومەندانە)</label>
+          <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+            <div class="file-upload-wrapper" id="tutorialFileWrapper" style="height:45px; margin-bottom:0; flex:1; border-color:rgba(139, 92, 246, 0.2);">
+              <input type="file" id="tutorialFile" accept="video/*,audio/*,.pdf,.doc,.docx,.txt,image/*" onchange="updateFileLabel(this, 'tutorialFileWrapper')">
+              <i class="fa-solid fa-file-video file-upload-icon" style="font-size:1.2rem; margin-bottom:0; margin-right:8px; display:inline-block;"></i>
+              <span class="file-upload-text" style="font-size:0.8rem;">فایل هەڵبژێرە...</span>
+            </div>
+            <input type="text" id="itemTutorial" placeholder="یان لینکی فێرکاری..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="addItem()">بڵاوکردنەوەی بابەت</button>
+      </div>
+
+      <!-- Role Management -->
+      <div id="roleSection" style="display: none;">
+        <div class="form-group">
+          <label>ناوی ئەو کەسەی دەتەوێت کە پلەی بدەیتێ</label>
+          <select id="roleTargetUser"
+            style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            <option value="">لە بارکردندایە...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ڕۆڵی نوێ (پلەی نوێ)</label>
+          <select id="roleNew"
+            style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--border-color); background:#050508; color:#fff;">
+            <option value="member">مێمبەر (Member)</option>
+            <option value="helper">یاریدەدەر (Helper)</option>
+            <option value="moderator">سەرپەرشتیار (Moderator)</option>
+            <option value="staff">ستاف (Staff)</option>
+            <option value="designer">دیزاینەر (Designer)</option>
+            <option value="developer">پەرەپێدەر (Developer)</option>
+            <option value="admin">ئەدمین (Admin)</option>
+            <option value="owner">ئۆنەر (Owner)</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="assignRole()">پێدانی ڕۆڵ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Gallery Modal -->
+  <div id="galleryModal" class="modal-overlay" style="z-index: 2000;">
+    <div class="modal-content" style="max-width: 900px; background: transparent; box-shadow: none; border: none; padding: 0;">
+      <button class="close-modal" onclick="document.getElementById('galleryModal').classList.remove('active')" style="top: -20px; right: 0; color: #fff; background: rgba(0,0,0,0.5); z-index: 20;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div style="position: relative; display: flex; align-items: center; justify-content: center; height: 75vh; width: 100%;">
+        <button id="galleryPrev" style="position: absolute; left: 10px; z-index: 10; background: rgba(0,0,0,0.7); color: white; border: none; font-size: 1.5rem; width: 50px; height: 50px; cursor: pointer; border-radius: 50%; display: none; transition: 0.3s;" onmouseover="this.style.background='var(--primary-color)'" onmouseout="this.style.background='rgba(0,0,0,0.7)'"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="galleryImage" src="" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 5;">
+        <button id="galleryNext" style="position: absolute; right: 10px; z-index: 10; background: rgba(0,0,0,0.7); color: white; border: none; font-size: 1.5rem; width: 50px; height: 50px; cursor: pointer; border-radius: 50%; display: none; transition: 0.3s;" onmouseover="this.style.background='var(--primary-color)'" onmouseout="this.style.background='rgba(0,0,0,0.7)'"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <div id="galleryDots" style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;"></div>
+    </div>
+  </div>
+
+  <!-- Pushing socket.io dependency -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    function updateFileLabel(inputElement, wrapperId) {
+      const wrapper = document.getElementById(wrapperId);
+      if (!wrapper) return;
+      const textSpan = wrapper.querySelector('.file-upload-text');
+      const icon = wrapper.querySelector('.file-upload-icon');
+      if (inputElement.files && inputElement.files.length > 0) {
+        wrapper.classList.add('has-file');
+        textSpan.textContent = inputElement.files.length > 1 ? `${inputElement.files.length} وێنە هەڵبژێردران` : inputElement.files[0].name;
+        icon.className = 'fa-solid fa-circle-check file-upload-icon';
+      } else {
+        wrapper.classList.remove('has-file');
+        textSpan.textContent = wrapperId.includes('image') || wrapperId.includes('Avatar') ? 'کلیک بکە بۆ هەڵبژاردنی وێنە' : 'کلیک بکە بۆ هەڵبژاردنی پەڕگە (فایل)';
+        icon.className = wrapperId.includes('image') ? 'fa-solid fa-images file-upload-icon' : wrapperId.includes('Avatar') ? 'fa-solid fa-image file-upload-icon' : (wrapperId.includes('tutorial') ? 'fa-solid fa-file-video file-upload-icon' : 'fa-solid fa-file-arrow-up file-upload-icon');
+      }
+    }
+
+    // Authentication and State
+    let currentUser = JSON.parse(localStorage.getItem('user')) || null;
+    let activeChat = 'public';
+    let allItemsCache = [];
+    let editingItemId = null;
+
+    // Gallery Logic
+    let currentGalleryImages = [];
+    let currentGalleryIndex = 0;
+
+    window.openGallery = (itemId) => {
+       const item = allItemsCache.find(x => x.id === parseInt(itemId));
+       if (!item) return;
+       currentGalleryImages = item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls : [item.imageUrl];
+       currentGalleryIndex = 0;
+       updateGalleryView();
+       document.getElementById('galleryModal').classList.add('active');
+    };
+
+    window.updateGalleryView = () => {
+       const imgEl = document.getElementById('galleryImage');
+       const dotsContainer = document.getElementById('galleryDots');
+       if (currentGalleryImages.length === 0) return;
+       
+       imgEl.src = currentGalleryImages[currentGalleryIndex];
+       
+       dotsContainer.innerHTML = currentGalleryImages.map((src, index) => 
+         `<div style="width: 12px; height: 12px; border-radius: 50%; background: ${index === currentGalleryIndex ? 'var(--primary-color)' : 'rgba(255,255,255,0.3)'}; cursor: pointer; transition: 0.3s;" onclick="setGalleryIndex(${index})"></div>`
+       ).join('');
+       
+       document.getElementById('galleryPrev').style.display = currentGalleryImages.length > 1 ? 'block' : 'none';
+       document.getElementById('galleryNext').style.display = currentGalleryImages.length > 1 ? 'block' : 'none';
+    };
+
+    window.setGalleryIndex = (idx) => {
+       currentGalleryIndex = idx;
+       updateGalleryView();
+    };
+
+    window.viewTutorial = (encodedTutorial) => {
+      const text = decodeURIComponent(encodedTutorial);
+      if (text.startsWith('http://') || text.startsWith('https://')) {
+        window.open(text, '_blank');
+      } else {
+        alert("فێرکاری:\n\n" + text);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+       const prev = document.getElementById('galleryPrev');
+       const next = document.getElementById('galleryNext');
+       if (prev) {
+          prev.onclick = () => {
+             currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+             updateGalleryView();
+          };
+       }
+       if (next) {
+          next.onclick = () => {
+             currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length;
+             updateGalleryView();
+          };
+       }
+    });
+
+    // Modal Logic
+    const authModal = document.getElementById("authModal");
+    const dashboardModal = document.getElementById("dashboardModal");
+    const loginBtn = document.getElementById("loginBtn");
+    const closeAuth = document.getElementById("closeAuth");
+    const closeDashboard = document.getElementById("closeDashboard");
+
+    const updateUI = () => {
+      if (currentUser) {
+        loginBtn.innerHTML = `<img src="${currentUser.avatar}" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.8); box-shadow:0 0 10px rgba(139,92,246,0.5);"> <span style="font-weight:700;">${currentUser.name}</span>`;
+        loginBtn.onclick = () => {
+          document.getElementById('dashboardModal').classList.add('active');
+          loadProfileData();
+        };
+      } else {
+        const t = (typeof translations !== 'undefined' && translations[localStorage.getItem('nexus_lang') || 'ku']) ? translations[localStorage.getItem('nexus_lang') || 'ku'] : null;
+        loginBtn.innerHTML = `<i class="fa-solid fa-user"></i> ${t ? t["btn-login"] : "هەژمارەکەم"}`;
+        loginBtn.onclick = () => authModal.classList.add("active");
+      }
+    };
+
+    function logoutUser() {
+        localStorage.removeItem('user');
+        currentUser = null;
+        document.getElementById('dashboardModal').classList.remove('active');
+        updateUI();
+    }
+    updateUI();
+
+    closeAuth.onclick = () => authModal.classList.remove("active");
+    closeDashboard.onclick = () => dashboardModal.classList.remove("active");
+
+    window.onclick = (e) => {
+      if (e.target == authModal) authModal.classList.remove("active");
+      if (e.target == dashboardModal) dashboardModal.classList.remove("active");
+      if (e.target.id === "galleryModal") document.getElementById('galleryModal').classList.remove("active");
+    };
+
+    function toggleAuth() {
+      const login = document.getElementById("loginForm");
+      const signup = document.getElementById("signupForm");
+      if (login.style.display === "none") {
+        login.style.display = "block";
+        signup.style.display = "none";
+      } else {
+        login.style.display = "none";
+        signup.style.display = "block";
+      }
+    }
+
+    // Load Profile Data into Dashboard
+    async function loadProfileData() {
+      if (!currentUser) return;
+      document.getElementById('profName').value = currentUser.name;
+      document.getElementById('profEmail').value = currentUser.email;
+
+      const role = currentUser.role;
+      const tabAdd = document.getElementById('tabAdd');
+      const tabRole = document.getElementById('tabRole');
+
+      tabAdd.style.display = ["Ownership", "owner", "admin", "staff"].includes(role) ? "block" : "none";
+      tabRole.style.display = ["Ownership", "owner"].includes(role) ? "block" : "none";
+
+      if (["Ownership", "owner"].includes(role)) {
+        const res = await fetch('/api/users?token=' + currentUser.token);
+        const users = await res.json();
+        if (!users.error) {
+          const selectOptions = users.map(u =>
+            `<option value="${u.email}">${u.name} - پلەی ئێستا: ${u.role}</option>`
+          ).join('');
+          document.getElementById('roleTargetUser').innerHTML = selectOptions || '<option value="">هیچ کەسێک بوونی نییە</option>';
+        }
+      }
+
+      switchDashboardTab('profile'); // reset tab on load
+    }
+
+    function switchDashboardTab(tab) {
+      document.getElementById('tabProfile').style.borderBottom = (tab === 'profile') ? "2px solid var(--primary-color)" : "none";
+      document.getElementById('tabProfile').style.color = (tab === 'profile') ? "var(--text-primary)" : "var(--text-secondary)";
+
+      document.getElementById('tabAdd').style.borderBottom = (tab === 'add') ? "2px solid var(--primary-color)" : "none";
+      document.getElementById('tabAdd').style.color = (tab === 'add') ? "var(--text-primary)" : "var(--text-secondary)";
+
+      document.getElementById('tabRole').style.borderBottom = (tab === 'role') ? "2px solid var(--primary-color)" : "none";
+      document.getElementById('tabRole').style.color = (tab === 'role') ? "var(--text-primary)" : "var(--text-secondary)";
+
+      document.getElementById('profileSection').style.display = (tab === 'profile') ? "block" : "none";
+      document.getElementById('addItemSection').style.display = (tab === 'add') ? "block" : "none";
+      document.getElementById('roleSection').style.display = (tab === 'role') ? "block" : "none";
+
+      if (tab !== 'add') {
+         editingItemId = null;
+         const btn = document.querySelector('#addItemSection .btn-primary');
+         if (btn) {
+           btn.innerHTML = 'بڵاوکردنەوەی بابەت';
+           btn.setAttribute('onclick', 'addItem()');
+         }
+         document.getElementById('itemTitle').value = '';
+         document.getElementById('itemUrl').value = '';
+         document.getElementById('itemTutorial').value = '';
+         if(document.getElementById('tutorialFile')) {
+            document.getElementById('tutorialFile').value = '';
+            updateFileLabel(document.getElementById('tutorialFile'), 'tutorialFileWrapper');
+         }
+         for(let i=1; i<=5; i++) {
+            if(document.getElementById('imageUrl'+i)) document.getElementById('imageUrl'+i).value = '';
+            if(document.getElementById('imageFile'+i)) {
+               document.getElementById('imageFile'+i).value = '';
+               updateFileLabel(document.getElementById('imageFile'+i), 'imageFileWrapper'+i);
+            }
+         }
+      }
+    }
+
+    async function updateProfile() {
+      const name = document.getElementById('profName').value;
+      const email = document.getElementById('profEmail').value;
+      const pass = document.getElementById('profPass').value;
+      const avatarFile = document.getElementById('profAvatarFile').files[0];
+
+      const formData = new FormData();
+      formData.append('token', currentUser.token);
+      if (name) formData.append('name', name);
+      if (email) formData.append('email', email);
+      if (pass) formData.append('password', pass);
+      if (avatarFile) formData.append('avatarFile', avatarFile);
+
+      const res = await fetch('/api/update-profile', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.error) return alert(data.error);
+      currentUser = data.user;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      alert('زانیارییەکانت بە سەرکەوتوویی نوێکرایەوە!');
+      updateUI();
+    }
+
+    async function addItem() {
+      try {
+        if (!currentUser) return alert('پێویستە بچیتە ژوورەوە!');
+        
+        const title = document.getElementById('itemTitle').value;
+        const category = document.getElementById('itemCat').value;
+        const catEl = document.getElementById('itemCat');
+        const g = catEl.options[catEl.selectedIndex].parentNode.label;
+        const type = g.includes('مۆدەکان') ? 'mod' : (g.includes('تووڵەکان') ? 'tool' : 'app');
+        const itemFile = document.getElementById('itemFile').files[0];
+        const itemUrl = document.getElementById('itemUrl').value;
+        const tutorial = document.getElementById('itemTutorial').value;
+        const tutorialFile = document.getElementById('tutorialFile') ? document.getElementById('tutorialFile').files[0] : null;
+
+        if (!title || !category) return alert('تکایە ناوی بابەت و جۆرەکەی دیاریبکە');
+        if (!itemFile && !itemUrl) return alert('تکایە فایلی بابەتەکە یان لینکی داگرتنەکەی دابنێ');
+
+        const formData = new FormData();
+        formData.append('token', currentUser.token);
+        formData.append('title', title);
+        formData.append('category', category);
+        formData.append('type', type);
+        
+        if (itemFile) formData.append('itemFile', itemFile);
+        else if (itemUrl) formData.append('downloadUrl', itemUrl);
+        
+        for (let i = 1; i <= 5; i++) {
+          const file = document.getElementById('imageFile'+i).files[0];
+          const url = document.getElementById('imageUrl'+i).value;
+          formData.append('imgSourceType_'+i, file ? 'file' : (url ? 'url' : 'none'));
+          if (file) formData.append('imageFiles', file);
+          if (url) formData.append('imageUrl_'+i, url);
+        }
+        formData.append('tutorialSourceType', tutorialFile ? 'file' : (tutorial ? 'url' : 'none'));
+        if (tutorialFile) formData.append('tutorialFile', tutorialFile);
+        if (tutorial) formData.append('tutorialUrl', tutorial);
+
+        const btn = document.querySelector('button[onclick="addItem()"]');
+        let originalText = btn ? btn.innerHTML : 'بڵاوکردنەوەی بابەت';
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> لە بارکردندایە...';
+          btn.disabled = true;
+        }
+
+        const res = await fetch('/api/add-item', { method: 'POST', body: formData });
+        
+        if (!res.ok) {
+          if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+          if (res.status === 413) {
+            return alert('هەڵە: قەبارەی فایلەکە زۆر گەورەیە بۆ سێرڤەر (سنووردارکراوە بۆ 4.5MB). تکایە لەجیاتی فایل، لینکی داگرتن بەکاربهێنە!');
+          }
+          return alert('هەڵەیەک لە سێرڤەرەوە ڕوویدا (کۆدی ' + res.status + '). لەوانەیە فۆڵدەری uploads کێشەی هەبێت لە ڤێرسڵ.');
+        }
+
+        const data = await res.json();
+        if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+
+        if (data.error) return alert(data.error);
+        alert('بابەتەکە بەسەرکەوتوویی زیادکرا!');
+        
+        document.getElementById('itemTitle').value = '';
+        document.getElementById('itemCat').value = '';
+        document.getElementById('itemType').value = 'app';
+        document.getElementById('itemFile').value = '';
+        document.getElementById('itemUrl').value = '';
+        document.getElementById('itemTutorial').value = '';
+        if (document.getElementById('tutorialFile')) {
+           document.getElementById('tutorialFile').value = '';
+           updateFileLabel(document.getElementById('tutorialFile'), 'tutorialFileWrapper');
+        }
+        for(let i=1; i<=5; i++) {
+           document.getElementById('imageUrl'+i).value = '';
+           document.getElementById('imageFile'+i).value = '';
+           updateFileLabel(document.getElementById('imageFile'+i), 'imageFileWrapper'+i);
+        }
+        loadItems(); // Refresh listing
+        switchDashboardTab('profile'); // Return to profile
+      } catch (error) {
+        console.error("addItem error:", error);
+        alert('هەڵەیەک لە وێبگەڕەکەت ڕوویدا: ' + error.message);
+        const btn = document.querySelector('button[onclick="addItem()"]');
+        if (btn) {
+          btn.innerHTML = 'بڵاوکردنەوەی بابەت';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    async function assignRole() {
+      const targetEmail = document.getElementById('roleTargetUser').value;
+      const newRole = document.getElementById('roleNew').value;
+      if (!targetEmail) return alert("تکایە کەسێک هەڵبژێرە");
+
+      const payload = { token: currentUser.token, targetEmail, newRole };
+      const res = await fetch('/api/assign-role', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (data.error) return alert(data.error);
+      alert(data.message);
+    }
+
+    // Login Logic
+    document.getElementById('loginSubmitBtn').onclick = async () => {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.error) return alert(data.error);
+      currentUser = data.user;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      authModal.classList.remove("active");
+      updateUI();
+      alert('بە سەرکەوتوویی چوویتە ژوورەوە!');
+    };
+
+    // Signup Logic
+    document.getElementById('signupSubmitBtn').onclick = async () => {
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (data.error) return alert(data.error);
+      currentUser = data.user;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      authModal.classList.remove("active");
+      updateUI();
+      alert('بە سەرکەوتوویی خۆت تۆمارکرد!');
+    };
+
+    // Chat Logic (Socket.io & AI)
+    const socket = io();
+    const publicChatInput = document.getElementById("publicChatInput");
+    const publicSendBtn = document.getElementById("publicSendBtn");
+
+    const aiChatInput = document.getElementById("aiChatInput");
+    const aiSendBtn = document.getElementById("aiSendBtn");
+
+    function appendMessage(msgItem, type = 'incoming', dest = 'chatMessages') {
+      const isObject = typeof msgItem === 'object';
+      const msgId = isObject ? msgItem.id : null;
+      let val = isObject ? msgItem.text : msgItem;
+      let senderName = isObject ? msgItem.senderName : null;
+      let avatarUrl = isObject ? msgItem.avatar : 'logo.png';
+
+      if (dest === 'chatMessages' && isObject) {
+         if (msgItem.senderEmail) {
+            type = (currentUser && currentUser.email === msgItem.senderEmail) ? 'outgoing' : 'incoming';
+         } else if (val && val.includes('<b>')) {
+            const extractedName = val.match(/<b>(.*?):<\/b>/);
+            if (extractedName) senderName = extractedName[1];
+            type = (currentUser && val.includes(`<b>${currentUser.name}:</b>`)) ? 'outgoing' : 'incoming';
+            val = val.replace(/<b>.*?:<\/b>\s*/, '');
+         }
+      }
+
+      const msgContainer = document.createElement("div");
+      msgContainer.style.display = "flex";
+      msgContainer.style.width = "100%";
+      msgContainer.style.justifyContent = type === 'incoming' ? 'flex-start' : 'flex-end';
+      msgContainer.style.marginBottom = "8px";
+      if (msgId) msgContainer.id = msgId;
+
+      const innerDiv = document.createElement("div");
+      innerDiv.style.display = "flex";
+      innerDiv.style.gap = "8px";
+      innerDiv.style.maxWidth = "80%";
+      innerDiv.style.alignItems = "flex-end";
+      innerDiv.style.flexDirection = type === 'incoming' ? 'row' : 'row-reverse';
+
+      const bubble = document.createElement("div");
+      bubble.className = "message " + type;
+      bubble.style.margin = "0";
+      bubble.style.maxWidth = "100%";
+      bubble.style.wordBreak = "break-word";
+
+      let bubbleContent = '';
+      if (type === 'incoming' && senderName && dest === 'chatMessages') {
+          let roleBadge = '';
+          const role = isObject ? msgItem.role : 'member';
+          
+          if (role === 'Ownership' || role === 'owner') roleBadge = '<span style="background:#ef4444; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">OWNER</span>';
+          else if (role === 'admin') roleBadge = '<span style="background:#8b5cf6; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">ADMIN</span>';
+          else if (role === 'staff') roleBadge = '<span style="background:#38bdf8; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">STAFF</span>';
+          else if (role === 'moderator') roleBadge = '<span style="background:#10b981; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">MOD</span>';
+          else if (role === 'helper') roleBadge = '<span style="background:#f59e0b; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">HELPER</span>';
+          else if (role === 'designer') roleBadge = '<span style="background:#ec4899; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">DESIGNER</span>';
+          else if (role === 'developer') roleBadge = '<span style="background:#6366f1; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:5px; font-weight:800;">DEV</span>';
+
+          bubbleContent += `<div style="font-size:0.75rem; color: #aaa; margin-bottom: 4px; display:flex; align-items:center;">${roleBadge} ${senderName}</div>`;
+      }
+      bubbleContent += val;
+
+      if (dest === 'chatMessages' && msgId && currentUser && ["admin", "owner", "Ownership"].includes(currentUser.role)) {
+         bubbleContent += ` <i class="fa-solid fa-trash" style="color:red; cursor:pointer; font-size:0.85rem; margin-right:8px; float:left;" onclick="socket.emit('deleteMessage', {token: currentUser.token, msgId: '${msgId}'})"></i>`;
+      }
+      bubble.innerHTML = bubbleContent;
+
+      if (type === 'incoming' && dest === 'chatMessages') {
+          innerDiv.innerHTML = `<img src="${avatarUrl}" style="width:28px; height:28px; border-radius:50%; object-fit:cover; flex-shrink:0;">`;
+      }
+      innerDiv.appendChild(bubble);
+      msgContainer.appendChild(innerDiv);
+
+      const box = document.getElementById(dest);
+      box.appendChild(msgContainer);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    socket.on('chatHistory', (history) => {
+      const box = document.getElementById("chatMessages");
+      box.innerHTML = '<div style="text-align:center; color:#888; margin-bottom:1rem; font-size:0.85rem;">بەخێربێن بۆ چاتی نێکسس!</div>';
+      history.forEach(msgObj => appendMessage(msgObj, 'incoming', 'chatMessages'));
+    });
+
+    socket.on('chatMessage', (msgObj) => {
+      appendMessage(msgObj, 'incoming', 'chatMessages');
+    });
+
+    socket.on('messageDeleted', (msgId) => {
+      const el = document.getElementById(msgId);
+      if (el) el.remove();
+    });
+
+    // Public Chat Send
+    publicSendBtn.onclick = () => {
+      const val = publicChatInput.value.trim();
+      if (val !== "") {
+        publicChatInput.value = "";
+        const senderName = currentUser ? currentUser.name : 'میوان';
+        const msgId = 'msg-' + Date.now();
+        const msgObj = { 
+          text: val, 
+          id: msgId, 
+          senderName: senderName, 
+          senderEmail: currentUser ? currentUser.email : null,
+          avatar: currentUser ? currentUser.avatar : 'logo.png',
+          role: currentUser ? currentUser.role : 'member'
+        };
+        appendMessage(msgObj, 'outgoing', 'chatMessages');
+        socket.emit('chatMessage', msgObj);
+      }
+    };
+    publicChatInput.onkeypress = (e) => { if (e.key === "Enter") publicSendBtn.click(); };
+
+    // AI Chat Send
+    aiSendBtn.onclick = async () => {
+      const val = aiChatInput.value.trim();
+      if (val !== "") {
+        aiChatInput.value = "";
+        appendMessage(val, 'outgoing', 'aiMessages');
+
+        const typingMsgId = 'typing-' + Date.now();
+        const msg = document.createElement("div");
+        msg.className = "message incoming";
+        msg.id = typingMsgId;
+        msg.innerHTML = "<small>بیردەکاتەوە...</small>";
+        document.getElementById('aiMessages').appendChild(msg);
+
+        try {
+          const res = await fetch('/api/ai-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: val })
+          });
+          const data = await res.json();
+          document.getElementById(typingMsgId).innerHTML = data.reply || "هەڵەیەک ڕوویدا";
+        } catch (e) {
+          document.getElementById(typingMsgId).innerHTML = "کێشەی هێڵ هەیە لەکاتی قسەکردن لەگەڵ نێکسس.";
+        }
+      }
+    };
+    aiChatInput.onkeypress = (e) => { if (e.key === "Enter") aiSendBtn.click(); };
+
+    async function handleItemDownload(id, url) {
+      if(id && id !== 'undefined') {
+        try {
+          await fetch('/api/download/' + id, { method: 'POST' });
+          loadItems(); // Refresh items to update stats seamlessly
+        } catch(e) {}
+      }
+      window.open(url, '_blank');
+    }
+
+    async function loadItems() {
+      // First fetch stats
+      try {
+        const statsRes = await fetch('/api/stats');
+        const statsData = await statsRes.json();
+        // Animate stats counting up just for fun
+        const statUsers = document.getElementById('statUsers');
+        const statItems = document.getElementById('statItems');
+        const statDownloads = document.getElementById('statDownloads');
+        if(statUsers) statUsers.textContent = Math.max(1, statsData.usersCount) + '+';
+        if(statItems) statItems.textContent = statsData.itemsCount;
+        if(statDownloads) statDownloads.textContent = statsData.downloads > 1000 ? (statsData.downloads/1000).toFixed(1)+'k+' : statsData.downloads;
+      } catch(e) { console.error('Failed to load stats'); }
+
+      const res = await fetch('/api/items');
+      const data = await res.json();
+      allItemsCache = [...(data.apps || []), ...(data.tools || []), ...(data.mods || [])];
+
+      // Update Trending Section
+      const trendingGrid = document.getElementById('trendingGrid');
+      if (trendingGrid && allItemsCache.length > 0) {
+        const topThree = [...allItemsCache].reverse().slice(0, 3);
+        const trendingHtml = topThree.map(i => {
+           let typeLabel = i.type === 'mod' ? 'مۆدەکان' : i.type === 'tool' ? 'تووڵەکان' : 'ئەپڵیکەیشنەکان';
+           let iconLabel = i.type === 'mod' ? 'fa-car' : i.type === 'tool' ? 'fa-toolbox' : 'fa-mobile-screen';
+           let colorLabel = i.type === 'mod' ? '#ef4444' : i.type === 'tool' ? '#38bdf8' : '#8b5cf6';
+           let bgRgb = i.type === 'mod' ? '239, 68, 68' : i.type === 'tool' ? '56, 189, 248' : '139, 92, 246';
+           return `
+          <div style="background: rgba(30, 25, 45, 0.8); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1.5rem; display: flex; align-items: center; gap: 1.2rem; cursor: pointer; transition: 0.3s;" onmouseover="this.style.backgroundColor='rgba(${bgRgb}, 0.1)'; this.style.borderColor='${colorLabel}'" onmouseout="this.style.backgroundColor='rgba(30, 25, 45, 0.8)'; this.style.borderColor='rgba(255,255,255,0.05)'" onclick="handleItemDownload('${i.id}', '${i.downloadUrl}')">
+            <img src="${i.imageUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=150'}" style="width: 80px; height: 80px; border-radius: 14px; object-fit: cover; cursor: zoom-in;" onclick="event.stopPropagation(); openGallery('${i.id}')" title="بینینی وێنەکان">
+            <div>
+              <h4 style="margin: 0 0 0.4rem 0; font-size: 1.2rem;">${i.title}</h4>
+              <p style="margin: 0; font-size: 0.9rem; color: ${colorLabel};"><i class="fa-solid ${iconLabel}" style="margin-left:4px;"></i> ${typeLabel}</p>
+              <p style="margin: 0.4rem 0 0 0; font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-star" style="color:#fcd34d"></i> ${i.rating} <span style="margin:0 5px">|</span> <i class="fa-solid fa-download"></i> ${i.downloads || 0} دابەزاندن</p>
+            </div>
+          </div>
+           `;
+        }).join('');
+        trendingGrid.innerHTML = trendingHtml;
+      } else if (trendingGrid) {
+         trendingGrid.innerHTML = '<p style="color: var(--text-secondary);">هیچ بابەتێک بونی نییە...</p>';
+      }
+
+      const renderCards = (list) => {
+        const canEdit = currentUser && ["Ownership", "owner", "admin"].includes(currentUser.role);
+        
+        return list.map((i, index) => {
+          const manageHtml = canEdit ? `
+             <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; z-index: 10;">
+                <button onclick="editItemFull(${i.id})" style="background: rgba(139, 92, 246, 0.8); color: #fff; border:none; border-radius: 8px; padding: 6px 10px; cursor:pointer; transition:0.3s;" onmouseover="this.style.background='var(--primary-color)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.8)'" title="دەستکاریکردن"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="deleteItem(${i.id})" style="background: rgba(239, 68, 68, 0.8); color: #fff; border:none; border-radius: 8px; padding: 6px 10px; cursor:pointer; transition:0.3s;" onmouseover="this.style.background='#ef4444'" onmouseout="this.style.background='rgba(239, 68, 68, 0.8)'" title="سڕینەوە"><i class="fa-solid fa-trash"></i></button>
+             </div>
+          ` : '';
+
+          return `
+            <div class="item-card" data-type="${i.type}" style="animation: slideUpFade 0.6s ease ${index * 0.08}s forwards; opacity: 0; position: relative;">
+              ${manageHtml}
+              <div class="item-img-container" onclick="openGallery('${i.id}')" title="بینینی وێنەکان" style="cursor: zoom-in;" onmouseover="this.querySelector('i.fa-magnifying-glass').style.opacity='1'" onmouseout="this.querySelector('i.fa-magnifying-glass').style.opacity='0'">
+                <img class="item-img" src="${i.imageUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600'}" alt="${i.title}">
+                <div class="item-img-overlay"><i class="fa-solid fa-magnifying-glass" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.5rem; color:rgba(255,255,255,0.8); opacity:0; transition:0.3s; pointer-events:none;"></i></div>
+              </div>
+              <div class="item-title">${i.title}</div>
+              <div class="item-category"><i class="fa-solid fa-tag"></i> ${i.category}</div>
+              <div class="item-footer">
+                <span style="font-weight:bold; color:#fcd34d;"><i class="fa-solid fa-star"></i> ${i.rating} &nbsp; <span style="font-size:0.85rem; color:#aaa; font-weight:normal"><i class="fa-solid fa-download"></i> ${i.downloads || 0}</span></span>
+                <div style="display: flex; gap: 8px;">
+                  ${i.tutorial ? `<button class="card-dl-btn" style="background:#fcd34d; color:#000;" onclick="viewTutorial('${encodeURIComponent(i.tutorial)}')"><i class="fa-solid fa-graduation-cap"></i> فێرکاری</button>` : ''}
+                  <button class="card-dl-btn" onclick="handleItemDownload('${i.id}', '${i.downloadUrl}')"><i class="fa-solid fa-download"></i> دابەزاندن</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      };
+
+      const appsGrid = document.getElementById('appsGrid');
+      const toolsGrid = document.getElementById('toolsGrid');
+
+      if (data.apps && data.apps.length > 0) {
+        appsGrid.innerHTML = renderCards(data.apps);
+      } else {
+        appsGrid.innerHTML = '<p style="color: var(--text-secondary);">هێشتا هیچ ئەپێک بڵاونەکراوەتەوە.</p>';
+      }
+
+      if (data.tools && data.tools.length > 0) {
+        toolsGrid.innerHTML = renderCards(data.tools);
+      } else {
+        toolsGrid.innerHTML = '<p style="color: var(--text-secondary);">هێشتا هیچ تووڵێک بڵاونەکراوەتەوە.</p>';
+      }
+
+      const modsGrid = document.getElementById('modsGrid');
+      if (data.mods && data.mods.length > 0) {
+        modsGrid.innerHTML = renderCards(data.mods);
+      } else {
+        modsGrid.innerHTML = '<p style="color: var(--text-secondary);">هێشتا هیچ مۆدێک بڵاونەکراوەتەوە.</p>';
+      }
+    }
+
+    async function editItemFull(id) {
+      if (!currentUser) return;
+      const item = allItemsCache.find(x => x.id === id);
+      if (!item) return;
+      
+      editingItemId = id;
+      
+      document.getElementById('dashboardModal').classList.add('active');
+      switchDashboardTab('add');
+      
+      document.getElementById('itemTitle').value = item.title || '';
+      document.getElementById('itemCat').value = item.category || '';
+      document.getElementById('itemType').value = item.type || 'app';
+      document.getElementById('itemUrl').value = item.downloadUrl && !item.downloadUrl.startsWith('/uploads/') ? item.downloadUrl : '';
+      document.getElementById('itemTutorial').value = item.tutorial || '';
+      
+      const images = item.imageUrls || (item.imageUrl ? [item.imageUrl] : []);
+      for(let i=1; i<=5; i++) {
+          document.getElementById('imageUrl'+i).value = images[i-1] || '';
+          document.getElementById('imageFile'+i).value = '';
+          updateFileLabel(document.getElementById('imageFile'+i), 'imageFileWrapper'+i);
+      }
+      
+      const btn = document.querySelector('#addItemSection .btn-primary');
+      if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-pen"></i> پاشەکەوتکردنی گۆڕانکاری';
+        btn.setAttribute('onclick', 'saveEditedItem()');
+      }
+    }
+
+    async function saveEditedItem() {
+      try {
+        if (!currentUser || !editingItemId) return;
+        
+        const title = document.getElementById('itemTitle').value;
+        const category = document.getElementById('itemCat').value;
+        const catEl = document.getElementById('itemCat');
+        const g = catEl.options[catEl.selectedIndex].parentNode.label;
+        const type = g.includes('مۆدەکان') ? 'mod' : (g.includes('تووڵەکان') ? 'tool' : 'app');
+        const itemFile = document.getElementById('itemFile').files[0];
+        const itemUrl = document.getElementById('itemUrl').value;
+        const tutorial = document.getElementById('itemTutorial').value;
+
+        if (!title || !category) return alert('تکایە ناوی بابەت و جۆرەکەی دیاریبکە');
+
+        const formData = new FormData();
+        formData.append('token', currentUser.token);
+        formData.append('id', editingItemId);
+        formData.append('title', title);
+        formData.append('category', category);
+        formData.append('type', type);
+        
+        if (itemFile) formData.append('itemFile', itemFile);
+        else if (itemUrl) formData.append('downloadUrl', itemUrl);
+        
+        for (let i = 1; i <= 5; i++) {
+          const file = document.getElementById('imageFile'+i).files[0];
+          const url = document.getElementById('imageUrl'+i).value;
+          formData.append('imgSourceType_'+i, file ? 'file' : (url ? 'url' : 'none'));
+          if (file) formData.append('imageFiles', file);
+          if (url) formData.append('imageUrl_'+i, url);
+        }
+        formData.append('tutorial', tutorial);
+
+        const btn = document.querySelector('#addItemSection .btn-primary');
+        let originalText = btn ? btn.innerHTML : 'پاشەکەوتکردنی گۆڕانکاری';
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> پاشەکەوت دەکرێت...';
+          btn.disabled = true;
+        }
+
+        const res = await fetch('/api/edit-item-full', { method: 'POST', body: formData });
+        
+        if (!res.ok) {
+          if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+          return alert('هەڵەیەکی سێرڤەر ڕوویدا لەکاتی دەستکاریکردن (کۆدی '+res.status+').');
+        }
+
+        const data = await res.json();
+        if (btn) { btn.innerHTML = 'بڵاوکردنەوەی بابەت'; btn.disabled = false; btn.setAttribute('onclick', 'addItem()'); }
+
+        if (data.error) return alert(data.error);
+        alert('بە سەرکەوتوویی دەستکاری کرا!');
+        
+        document.getElementById('itemTitle').value = '';
+        document.getElementById('itemCat').value = '';
+        if (document.getElementById('itemFile')) document.getElementById('itemFile').value = '';
+        if (document.getElementById('itemUrl')) document.getElementById('itemUrl').value = '';
+        if (document.getElementById('imageFile')) document.getElementById('imageFile').value = '';
+        if (document.getElementById('imageUrl')) document.getElementById('imageUrl').value = '';
+        editingItemId = null;
+        loadItems(); 
+        switchDashboardTab('profile');
+      } catch (error) {
+        alert('هەڵەیەک ڕوویدا: ' + error.message);
+        const btn = document.querySelector('#addItemSection .btn-primary');
+        if (btn) { btn.innerHTML = 'بڵاوکردنەوەی بابەت'; btn.disabled = false; btn.setAttribute('onclick', 'addItem()'); }
+      }
+    }
+
+    async function deleteItem(id) {
+       if (!currentUser) return;
+       const confirmDel = confirm("دڵنیایت لە سڕینەوەی ئەم بابەتە؟");
+       if (!confirmDel) return;
+       
+       const res = await fetch('/api/delete-item', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ token: currentUser.token, id })
+      });
+      const data = await res.json();
+      if (data.error) return alert(data.error);
+      alert('بابەتەکە بە سەرکەوتوویی سڕایەوە!');
+      loadItems();
+    }
+
+    function navigateTo(pageId) {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const page = document.getElementById('page-' + pageId);
+      if (page) page.classList.add('active');
+
+      const navEl = document.getElementById('nav-' + pageId);
+      if (navEl) navEl.classList.add('active');
+
+      window.scrollTo(0, 0);
+    }
+
+    window.addEventListener('DOMContentLoaded', loadItems);
+  </script>
+  <script src="lang.js"></script>
+</body>
+
+</html>

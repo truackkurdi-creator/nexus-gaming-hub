@@ -1,0 +1,9 @@
+node_modules
+uploads
+*.zip
+*.rar
+*.exe
+*.mp4
+*.mkv
+*.pdf
+.env
